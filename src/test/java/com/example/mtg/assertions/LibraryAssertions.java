@@ -1,4 +1,4 @@
-package com.example.mtg;
+package com.example.mtg.assertions;
 
 import com.example.mtg.model.Card;
 import com.example.mtg.model.Library;

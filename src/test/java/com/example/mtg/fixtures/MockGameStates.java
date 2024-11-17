@@ -1,10 +1,16 @@
 package com.example.mtg.fixtures;
 
+import com.example.mtg.assertions.GraveyardAssertions;
+import com.example.mtg.assertions.HandAssertions;
+import com.example.mtg.assertions.LibraryAssertions;
 import com.example.mtg.model.Game;
 import com.example.mtg.model.GameId;
 import com.example.mtg.model.Player;
 import com.example.mtg.model.PlayerId;
 
+import static com.example.mtg.assertions.GraveyardAssertions.assertThatGraveyard;
+import static com.example.mtg.assertions.HandAssertions.assertThatHand;
+import static com.example.mtg.assertions.LibraryAssertions.assertThatLibrary;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class MockGameStates implements Game.Lookup {
@@ -60,6 +66,18 @@ public class MockGameStates implements Game.Lookup {
             Player actual = game.players().get(playerId);
             assertThat(actual.hasWon()).isTrue();
             return this;
+        }
+
+        public HandAssertions handOf(PlayerId playerId) {
+            return assertThatHand(game.handOf(playerId));
+        }
+
+        public GraveyardAssertions graveyardOf(PlayerId playerId) {
+            return assertThatGraveyard(game.graveyardOf(playerId));
+        }
+
+        public LibraryAssertions libraryOf(PlayerId playerId) {
+            return assertThatLibrary(game.libraryOf(playerId));
         }
     }
 }

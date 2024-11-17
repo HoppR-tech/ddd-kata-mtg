@@ -1,18 +1,17 @@
 package com.example.mtg.model;
 
-import com.example.mtg.use_case.draw.CardsDrawn;
 import lombok.EqualsAndHashCode;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 
 import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Deque;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Consumer;
+import java.util.function.BiConsumer;
 
 @RequiredArgsConstructor
 @Accessors(fluent = true)
@@ -22,21 +21,21 @@ public class Library {
 
     private final Deque<Card> cards;
 
-    public void draw(Number numberOfCards, Consumer<CardsDrawn> output) {
-        CardsDrawn.CardsDrawnBuilder eventBuilder = CardsDrawn.builder();
+    public void draw(Number numberOfCards, BiConsumer<List<Card>, Boolean> output) {
+        List<Card> drawnCards = new ArrayList<>();
+        boolean overdrawn = false;
 
         for (int i = 0; i < numberOfCards.value(); i++) {
             if (isEmpty()) {
-                eventBuilder.libraryOverdrawn(true);
+                overdrawn = true;
                 break;
             }
 
             Card card = cards.pop();
-            eventBuilder.card(card);
+            drawnCards.add(card);
         }
 
-        CardsDrawn event = eventBuilder.build();
-        output.accept(event);
+        output.accept(drawnCards, overdrawn);
     }
 
     public boolean isEmpty() {
@@ -60,6 +59,10 @@ public class Library {
     public static Library composedOf(Card... cards) {
         Deque<Card> libraryCards = new ArrayDeque<>(Arrays.asList(cards));
         return new Library(libraryCards);
+    }
+
+    public static Library empty() {
+        return composedOf();
     }
 
 }

@@ -1,5 +1,6 @@
 package com.example.mtg.model;
 
+import com.example.mtg.use_case.discard.CardDiscarded;
 import com.example.mtg.use_case.draw.CardsDrawn;
 import com.example.mtg.use_case.player_lost.PlayerLost;
 import com.example.mtg.use_case.player_won.PlayerWon;
@@ -7,25 +8,25 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 
-import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
+@Builder
 @Accessors(fluent = true)
 public class Player {
 
     @Getter
     private final PlayerId id;
-    private final Library library;
-    private final Hand hand;
+    @Getter
+    @Builder.Default
+    private final Library library = Library.empty();
+    @Getter
+    @Builder.Default
+    private final Hand hand = Hand.empty();
+    @Getter
+    @Builder.Default
+    private final Graveyard graveyard = Graveyard.empty();
     private boolean hasWon;
     private boolean hasLost;
-
-    @Builder
-    private Player(PlayerId id, Library library, Hand hand) {
-        this.id = id;
-        this.library = library;
-        this.hand = hand;
-    }
 
     public boolean hasWon() {
         return hasWon;
@@ -35,11 +36,26 @@ public class Player {
         return hasLost;
     }
 
-    public void draw(Number numberOfCards, BiConsumer<PlayerId, CardsDrawn> output) {
-        library.draw(numberOfCards, cardsDrawn -> {
-            hand.add(cardsDrawn.cards());
-            output.accept(id, cardsDrawn);
+    public void draw(Number numberOfCards, Consumer<CardsDrawn> output) {
+        library.draw(numberOfCards, (cards, overdrawn) -> {
+            hand.add(cards);
+
+            output.accept(CardsDrawn.builder()
+                    .drawnBy(id)
+                    .cards(cards)
+                    .libraryOverdrawn(overdrawn)
+                    .build());
         });
+    }
+
+    public void discard(Card card, Consumer<CardDiscarded> output) {
+        hand.discard(card);
+        graveyard.add(card);
+
+        output.accept(CardDiscarded.builder()
+                .owner(id)
+                .card(card)
+                .build());
     }
 
     public void lost(Consumer<PlayerLost> output) {
@@ -61,5 +77,4 @@ public class Player {
 
         output.accept(event);
     }
-
 }

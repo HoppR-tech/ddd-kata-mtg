@@ -9,23 +9,20 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+@RequiredArgsConstructor
 @Accessors(fluent = true)
 @EqualsAndHashCode
 @ToString
-public class Hand {
+public class Graveyard {
 
     private final List<Card> cards;
-
-    private Hand(List<Card> cards) {
-        this.cards = new ArrayList<>(cards);
-    }
 
     public void add(List<Card> cards) {
         this.cards.addAll(cards);
     }
 
-    public boolean isEmpty() {
-        return cards.isEmpty();
+    public void add(Card... cards) {
+        add(Arrays.asList(cards));
     }
 
     public int size() {
@@ -36,15 +33,8 @@ public class Hand {
         return List.copyOf(cards);
     }
 
-    public void discard(Card card) {
-        cards.remove(card);
+    public static Graveyard empty() {
+        return new Graveyard(new ArrayList<>());
     }
 
-    public static Hand composedOf(Card... cards) {
-        return new Hand(Arrays.asList(cards));
-    }
-
-    public static Hand empty() {
-        return composedOf();
-    }
 }

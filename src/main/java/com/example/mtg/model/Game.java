@@ -1,5 +1,6 @@
 package com.example.mtg.model;
 
+import com.example.mtg.use_case.discard.DiscardCard;
 import com.example.mtg.use_case.draw.CardsDrawn;
 import com.example.mtg.use_case.draw.DrawCards;
 import com.example.mtg.use_case.player_lost.PlayerLost;
@@ -36,6 +37,18 @@ public class Game {
         isOver = true;
     }
 
+    public Hand handOf(PlayerId playerId) {
+        return getPlayer(playerId).hand();
+    }
+
+    public Graveyard graveyardOf(PlayerId playerId) {
+        return getPlayer(playerId).graveyard();
+    }
+
+    public Library libraryOf(PlayerId playerId) {
+        return getPlayer(playerId).library();
+    }
+
     private Player getPlayer(PlayerId playerId) {
         return players.get(playerId);
     }
@@ -45,14 +58,19 @@ public class Game {
         player.draw(command.numberOfCards(), stateBasedActions::checkLibraryOverdrawn);
     }
 
+    public void accept(DiscardCard command) {
+        Player player = players.get(command.targetPlayer());
+        player.discard(command.chosenCard(), (event) -> {});
+    }
+
     private class StateBasedActions {
 
-        public void checkLibraryOverdrawn(PlayerId playerId, CardsDrawn cardsDrawn) {
+        public void checkLibraryOverdrawn(CardsDrawn cardsDrawn) {
             if (!cardsDrawn.libraryOverdrawn()) {
                 return;
             }
 
-            getPlayer(playerId).lost(stateBasedActions::playerLost);
+            getPlayer(cardsDrawn.drawnBy()).lost(stateBasedActions::playerLost);
         }
 
         private void playerLost(PlayerLost playerLost) {

@@ -1,4 +1,4 @@
-package com.example.mtg;
+package com.example.mtg.assertions;
 
 import com.example.mtg.model.Card;
 import com.example.mtg.model.Hand;
@@ -21,8 +21,11 @@ public class HandAssertions {
         return this;
     }
 
+    public void containsOnlyOnce(Card card) {
+        assertThat(hand.cards()).containsOnlyOnce(card);
+    }
+
     public static HandAssertions assertThatHand(Hand hand) {
         return new HandAssertions(hand);
     }
-
 }
