@@ -1,9 +1,20 @@
 package com.example.mtg.model;
 
-public record Card(String name) {
+import lombok.Builder;
 
-    public static Card of(String name) {
-        return new Card(name);
+@Builder
+public record Card(CardId id, CardName name) {
+
+    public Card {
+        if (id == null) {
+            throw new IllegalArgumentException("id cannot be null");
+        }
+        if (name == null) {
+            throw new IllegalArgumentException("name cannot be null");
+        }
     }
 
+    public boolean hasId(CardId id) {
+        return this.id.equals(id);
+    }
 }

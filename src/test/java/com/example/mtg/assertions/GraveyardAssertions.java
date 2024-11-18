@@ -1,6 +1,7 @@
 package com.example.mtg.assertions;
 
 import com.example.mtg.model.Card;
+import com.example.mtg.model.CardName;
 import com.example.mtg.model.Graveyard;
 import lombok.RequiredArgsConstructor;
 
@@ -16,8 +17,10 @@ public class GraveyardAssertions {
         return this;
     }
 
-    public GraveyardAssertions doesContain(Card... card) {
-        assertThat(graveyard.cards()).containsAnyOf(card);
+    public GraveyardAssertions doesContain(CardName... cardNames) {
+        assertThat(graveyard.cards())
+                .map(Card::name)
+                .containsAnyOf(cardNames);
         return this;
     }
 

@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import static com.example.mtg.fixtures.CardFixtures.DIABOLIC_TUTOR;
 import static com.example.mtg.fixtures.CardFixtures.PLAIN;
 import static com.example.mtg.fixtures.CardFixtures.SWAMP;
+import static com.example.mtg.fixtures.CardFixtures.card;
 import static com.example.mtg.fixtures.GameFixtures.GAME_ID;
 import static com.example.mtg.fixtures.GameFixtures.JON_FINKEL;
 import static com.example.mtg.fixtures.GameFixtures.ONE;
@@ -22,7 +23,11 @@ public class DrawCardsUseCaseTest {
 
     Player playerOne = Player.builder()
             .id(RICHARD_GARFIELD)
-            .library(Library.composedOf(DIABOLIC_TUTOR, PLAIN, SWAMP, SWAMP))
+            .library(Library.composedOf(
+                    card(DIABOLIC_TUTOR),
+                    card(PLAIN),
+                    card(SWAMP),
+                    card(SWAMP)))
             .hand(Hand.empty())
             .build();
 

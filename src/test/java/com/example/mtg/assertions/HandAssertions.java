@@ -1,6 +1,7 @@
 package com.example.mtg.assertions;
 
 import com.example.mtg.model.Card;
+import com.example.mtg.model.CardName;
 import com.example.mtg.model.Hand;
 import lombok.RequiredArgsConstructor;
 
@@ -16,13 +17,17 @@ public class HandAssertions {
         return this;
     }
 
-    public HandAssertions doesContain(Card... card) {
-        assertThat(hand.cards()).containsAnyOf(card);
+    public HandAssertions doesContain(CardName... cardNames) {
+        assertThat(hand.cards())
+                .map(Card::name)
+                .containsAnyOf(cardNames);
         return this;
     }
 
-    public void containsOnlyOnce(Card card) {
-        assertThat(hand.cards()).containsOnlyOnce(card);
+    public void containsOnlyOnce(CardName cardName) {
+        assertThat(hand.cards())
+                .map(Card::name)
+                .containsOnlyOnce(cardName);
     }
 
     public static HandAssertions assertThatHand(Hand hand) {

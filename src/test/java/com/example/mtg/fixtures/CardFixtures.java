@@ -1,11 +1,27 @@
 package com.example.mtg.fixtures;
 
 import com.example.mtg.model.Card;
+import com.example.mtg.model.CardId;
+import com.example.mtg.model.CardName;
 
 public class CardFixtures {
 
-    public static final Card DIABOLIC_TUTOR = Card.of("Diabolic Tutor");
-    public static final Card PLAIN = Card.of("Plain");
-    public static final Card SWAMP = Card.of("Swamp");
+    public static final CardName DIABOLIC_TUTOR = CardName.of("Diabolic Tutor");
+    public static final CardName PLAIN = CardName.of("Plain");
+    public static final CardName SWAMP = CardName.of("Swamp");
+
+    public static Card card(CardName cardName) {
+        return Card.builder()
+                .id(CardId.generate())
+                .name(cardName)
+                .build();
+    }
+
+    public static Card card(CardId cardId, CardName cardName) {
+        return Card.builder()
+                .id(cardId)
+                .name(cardName)
+                .build();
+    }
 
 }

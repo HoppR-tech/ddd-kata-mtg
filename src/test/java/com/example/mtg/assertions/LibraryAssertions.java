@@ -1,6 +1,7 @@
 package com.example.mtg.assertions;
 
 import com.example.mtg.model.Card;
+import com.example.mtg.model.CardName;
 import com.example.mtg.model.Library;
 import lombok.RequiredArgsConstructor;
 
@@ -21,13 +22,17 @@ public class LibraryAssertions {
         return this;
     }
 
-    public LibraryAssertions firstIs(Card card) {
-        assertThat(library.first()).contains(card);
+    public LibraryAssertions firstIs(CardName cardName) {
+        assertThat(library.first())
+                .map(Card::name)
+                .contains(cardName);
         return this;
     }
 
-    public LibraryAssertions doesNotContain(Card card) {
-        assertThat(library.cards()).doesNotContain(card);
+    public LibraryAssertions doesNotContain(CardName cardName) {
+        assertThat(library.cards())
+                .map(Card::name)
+                .doesNotContain(cardName);
         return this;
     }
 

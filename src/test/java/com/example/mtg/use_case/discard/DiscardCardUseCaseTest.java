@@ -1,6 +1,7 @@
 package com.example.mtg.use_case.discard;
 
 import com.example.mtg.fixtures.MockGameStates;
+import com.example.mtg.model.CardId;
 import com.example.mtg.model.Game;
 import com.example.mtg.model.Graveyard;
 import com.example.mtg.model.Hand;
@@ -12,16 +13,23 @@ import org.junit.jupiter.api.Test;
 import static com.example.mtg.fixtures.CardFixtures.DIABOLIC_TUTOR;
 import static com.example.mtg.fixtures.CardFixtures.PLAIN;
 import static com.example.mtg.fixtures.CardFixtures.SWAMP;
+import static com.example.mtg.fixtures.CardFixtures.card;
 import static com.example.mtg.fixtures.GameFixtures.GAME_ID;
 import static com.example.mtg.fixtures.GameFixtures.JON_FINKEL;
 import static com.example.mtg.fixtures.GameFixtures.RICHARD_GARFIELD;
 
 class DiscardCardUseCaseTest {
 
+    static final CardId CARD_ID = CardId.of("CHOSEN_CARD");
+
     Player playerOne = Player.builder()
             .id(RICHARD_GARFIELD)
             .library(Library.composedOf())
-            .hand(Hand.composedOf(DIABOLIC_TUTOR, PLAIN, SWAMP, SWAMP))
+            .hand(Hand.composedOf(
+                    card(DIABOLIC_TUTOR),
+                    card(PLAIN),
+                    card(CARD_ID, SWAMP),
+                    card(SWAMP)))
             .graveyard(Graveyard.empty())
             .build();
 
@@ -43,7 +51,7 @@ class DiscardCardUseCaseTest {
         useCase.accept(DiscardCard.builder()
                 .gameId(GAME_ID)
                 .targetPlayer(RICHARD_GARFIELD)
-                .chosenCard(SWAMP)
+                .chosenCard(CARD_ID)
                 .build());
 
         games.assertions()

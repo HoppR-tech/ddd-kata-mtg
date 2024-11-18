@@ -48,13 +48,12 @@ public class Player {
         });
     }
 
-    public void discard(Card card, Consumer<CardDiscarded> output) {
-        hand.discard(card);
-        graveyard.add(card);
+    public void discard(CardId cardId, Consumer<CardDiscarded> output) {
+        hand.discard(cardId, graveyard::add);
 
         output.accept(CardDiscarded.builder()
                 .owner(id)
-                .card(card)
+                .cardId(cardId)
                 .build());
     }
 
