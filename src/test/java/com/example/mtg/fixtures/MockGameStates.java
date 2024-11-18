@@ -1,13 +1,16 @@
 package com.example.mtg.fixtures;
 
+import com.example.mtg.assertions.ExileAssertions;
 import com.example.mtg.assertions.GraveyardAssertions;
 import com.example.mtg.assertions.HandAssertions;
 import com.example.mtg.assertions.LibraryAssertions;
+import com.example.mtg.assertions.StackAssertions;
 import com.example.mtg.model.Game;
 import com.example.mtg.model.GameId;
 import com.example.mtg.model.Player;
 import com.example.mtg.model.PlayerId;
 
+import static com.example.mtg.assertions.ExileAssertions.assertThatExile;
 import static com.example.mtg.assertions.GraveyardAssertions.assertThatGraveyard;
 import static com.example.mtg.assertions.HandAssertions.assertThatHand;
 import static com.example.mtg.assertions.LibraryAssertions.assertThatLibrary;
@@ -57,6 +60,11 @@ public class MockGameStates implements Game.Lookup {
             return this;
         }
 
+        public Assertions gameHasNotBeenSaved() {
+            assertThat(timesSaveHasBeenCalled).isZero();
+            return this;
+        }
+
         public Assertions gameHasBeenSaved() {
             assertThat(timesSaveHasBeenCalled).isPositive();
             return this;
@@ -78,6 +86,14 @@ public class MockGameStates implements Game.Lookup {
 
         public LibraryAssertions libraryOf(PlayerId playerId) {
             return assertThatLibrary(game.libraryOf(playerId));
+        }
+
+        public ExileAssertions exileOf(PlayerId playerId) {
+            return assertThatExile(game.exileOf(playerId));
+        }
+
+        public StackAssertions stack() {
+            return new StackAssertions(game.stack());
         }
     }
 }

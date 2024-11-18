@@ -12,11 +12,11 @@ import java.util.function.Consumer;
 @Accessors(fluent = true)
 @EqualsAndHashCode
 @ToString
-public final class Hand implements Zone {
+public final class Exile implements Zone {
 
     private final List<Card> cards;
 
-    private Hand(List<Card> cards) {
+    public Exile(List<Card> cards) {
         this.cards = new ArrayList<>(cards);
     }
 
@@ -24,8 +24,8 @@ public final class Hand implements Zone {
         this.cards.addAll(cards);
     }
 
-    public boolean isEmpty() {
-        return cards.isEmpty();
+    public void add(Card... cards) {
+        add(Arrays.asList(cards));
     }
 
     public int size() {
@@ -34,6 +34,18 @@ public final class Hand implements Zone {
 
     public List<Card> cards() {
         return List.copyOf(cards);
+    }
+
+    public static Exile composedOf(List<Card> cards) {
+        return new Exile(cards);
+    }
+
+    public static Exile composedOf(Card... cards) {
+        return composedOf(Arrays.asList(cards));
+    }
+
+    public static Exile empty() {
+        return composedOf();
     }
 
     @Override
@@ -50,13 +62,5 @@ public final class Hand implements Zone {
             cards.remove(card);
             output.accept(card);
         });
-    }
-
-    public static Hand composedOf(Card... cards) {
-        return new Hand(Arrays.asList(cards));
-    }
-
-    public static Hand empty() {
-        return composedOf();
     }
 }

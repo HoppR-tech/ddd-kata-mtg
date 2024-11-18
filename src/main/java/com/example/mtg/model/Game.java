@@ -1,5 +1,6 @@
 package com.example.mtg.model;
 
+import com.example.mtg.use_case.cast_spell.CastSpell;
 import com.example.mtg.use_case.discard.DiscardCard;
 import com.example.mtg.use_case.draw.CardsDrawn;
 import com.example.mtg.use_case.draw.DrawCards;
@@ -11,6 +12,7 @@ import lombok.experimental.Accessors;
 
 import java.util.List;
 
+@Builder
 @Accessors(fluent = true)
 public class Game {
 
@@ -18,13 +20,13 @@ public class Game {
     private final GameId id;
     @Getter
     private final Players players;
-    private final StateBasedActions stateBasedActions = new StateBasedActions();
+    @Getter
+    @Builder.Default
+    private final Stack stack = Stack.empty();
+    @Builder.Default
+    private Priority priority = Priority.none();
 
-    @Builder
-    private Game(GameId id, Players players) {
-        this.id = id;
-        this.players = players;
-    }
+    private final StateBasedActions stateBasedActions = new StateBasedActions();
 
     @Getter
     private boolean isOver;
@@ -49,8 +51,16 @@ public class Game {
         return getPlayer(playerId).library();
     }
 
+    public Exile exileOf(PlayerId playerId) {
+        return getPlayer(playerId).exile();
+    }
+
     private Player getPlayer(PlayerId playerId) {
         return players.get(playerId);
+    }
+
+    public void givesPriorityTo(PlayerId playerId) {
+        this.priority = Priority.forPlayer(playerId);
     }
 
     public void accept(DrawCards command) {
@@ -61,6 +71,17 @@ public class Game {
     public void accept(DiscardCard command) {
         Player player = players.get(command.targetPlayer());
         player.discard(command.chosenCard(), (event) -> {});
+    }
+
+    public void accept(CastSpell command) {
+        PlayerId castedBy = command.castedBy();
+
+        if (!priority.isActive(castedBy)) {
+            throw new IllegalStateException("Priority is not given to player '%s'".formatted(castedBy.value()));
+        }
+
+        Player player = players.get(castedBy);
+        player.castSpell(command.cardId(), stack, (event) -> {});
     }
 
     private class StateBasedActions {

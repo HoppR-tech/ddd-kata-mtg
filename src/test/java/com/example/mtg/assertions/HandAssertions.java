@@ -24,6 +24,13 @@ public class HandAssertions {
         return this;
     }
 
+    public HandAssertions doesNotContain(CardName... cardNames) {
+        assertThat(hand.cards())
+                .map(Card::name)
+                .doesNotContain(cardNames);
+        return this;
+    }
+
     public void containsOnlyOnce(CardName cardName) {
         assertThat(hand.cards())
                 .map(Card::name)

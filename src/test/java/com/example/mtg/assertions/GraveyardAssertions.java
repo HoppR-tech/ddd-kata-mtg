@@ -24,6 +24,13 @@ public class GraveyardAssertions {
         return this;
     }
 
+    public GraveyardAssertions doesNotContain(CardName... cardNames) {
+        assertThat(graveyard.cards())
+                .map(Card::name)
+                .doesNotContain(cardNames);
+        return this;
+    }
+
     public static GraveyardAssertions assertThatGraveyard(Graveyard graveyard) {
         return new GraveyardAssertions(graveyard);
     }
